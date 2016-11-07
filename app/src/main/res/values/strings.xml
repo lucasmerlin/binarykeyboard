@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Binary Keyboard</string>
+    <string name="binary_input_label">Binary Keyboard</string>
+    <string name="subtype_en_US">Binary Keyboard</string>
+</resources>

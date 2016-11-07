@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:background="#ffffff">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_below="@+id/buttonBack"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="0"
+            android:id="@+id/btn0"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="1"
+            android:id="@+id/btn1"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="00000000 00000000: "
+        android:id="@+id/textView"
+        android:fontFamily="monospace"
+        android:layout_alignBottom="@+id/buttonBack"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center_vertical"
+        android:layout_alignTop="@+id/buttonBack" />
+
+    <ImageButton
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&lt;-"
+        android:id="@+id/buttonBack"
+        android:src="@drawable/ic_backspace_black_18dp"
+        android:layout_below="@+id/unicodeList"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageButton
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&lt;-"
+        android:id="@+id/imageButton"
+        android:src="@drawable/ic_keyboard_black_18dp"
+        android:layout_above="@+id/linearLayout"
+        android:layout_toLeftOf="@+id/buttonBack"
+        android:layout_toStartOf="@+id/buttonBack" />
+
+    <ImageButton
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&lt;-"
+        android:id="@+id/btnSettings"
+        android:src="@drawable/ic_settings_black_18dp"
+        android:layout_alignTop="@+id/imageButton"
+        android:layout_toLeftOf="@+id/imageButton"
+        android:layout_toStartOf="@+id/imageButton" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/loutSettings"
+        android:visibility="gone">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unicode list"
+            android:id="@+id/chkUnicodeList"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8 Bit"
+                android:id="@+id/bit8Button" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="16 Bit"
+                android:id="@+id/bit16Button"
+                android:layout_below="@+id/bit8Button"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        </RadioGroup>
+
+    </RelativeLayout>
+
+    <media.merlins.binarykeyboard.UnicodeListView
+        android:layout_width="wrap_content"
+        android:layout_height="160dp"
+        android:id="@+id/unicodeList"
+        android:layout_below="@+id/loutSettings"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:visibility="visible" />
+
+</RelativeLayout>
