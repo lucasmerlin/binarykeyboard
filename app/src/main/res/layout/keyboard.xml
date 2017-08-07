@@ -6,25 +6,12 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/buttonBack"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout">
+        android:id="@+id/keyboardContainer">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="0"
-            android:id="@+id/btn0"
-            android:layout_weight="1" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="1"
-            android:id="@+id/btn1"
-            android:layout_weight="1" />
     </LinearLayout>
 
     <TextView
@@ -58,7 +45,7 @@
         android:text="&lt;-"
         android:id="@+id/imageButton"
         android:src="@drawable/ic_keyboard_black_18dp"
-        android:layout_above="@+id/linearLayout"
+        android:layout_above="@+id/keyboardContainer"
         android:layout_toLeftOf="@+id/buttonBack"
         android:layout_toStartOf="@+id/buttonBack" />
 
