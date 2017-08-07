@@ -3,18 +3,20 @@ package media.merlins.binarykeyboard;
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.text.Html;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by lucas on 1entryLength - 1.06.2016.
@@ -26,17 +28,24 @@ public class BinaryInputMethodService extends InputMethodService {
         //sendKeyChar('*');
     }
 
-    byte bitLength = 16;
-    
-    char letter = 0;
-    byte counter = 0;
-
     TextView output;
 
     UnicodeListView unicodeList;
 
+    Settings settings;
+    KeyboardType keyboard;
+
+    Timer backButtonTimer = new Timer();
+    boolean isLongClick = false;
+
     @Override
     public View onCreateInputView() {
+        settings = new Settings();
+
+        keyboard = new TypeBinaryKeyboard();
+        keyboard.setup(this, settings);
+
+
 
         LayoutInflater lif = LayoutInflater.from(this);
         final View v = lif.inflate(R.layout.keyboard, null);
@@ -45,55 +54,90 @@ public class BinaryInputMethodService extends InputMethodService {
 
         final SharedPreferences prefs = getSharedPreferences("default", MODE_PRIVATE);
         v.findViewById(R.id.unicodeList).setVisibility(prefs.getBoolean("unicodeListVisible", true) ? View.VISIBLE : View.GONE);
-        bitLength = (byte) prefs.getInt("bitLength", 8);
+        settings.setBitLength((byte) prefs.getInt("bitLength", 8));
 
-        ((RadioButton) v.findViewById(R.id.bit8Button)).setChecked(bitLength == 8);
-        ((RadioButton) v.findViewById(R.id.bit16Button)).setChecked(bitLength == 16);
-
-
+        ((RadioButton) v.findViewById(R.id.bit8Button)).setChecked(settings.getBitLength() == 8);
+        ((RadioButton) v.findViewById(R.id.bit16Button)).setChecked(settings.getBitLength() == 16);
 
 
-        v.findViewById(R.id.btn0).setOnClickListener(new View.OnClickListener() {
+        ((LinearLayout) v.findViewById(R.id.keyboardContainer)).addView(keyboard.getView(((LinearLayout) v.findViewById(R.id.keyboardContainer))));
+
+
+        keyboard.addListener(new KeyboardListener() {
+
             @Override
-            public void onClick(View view) {
-                if (counter == bitLength) {
-                    letter = 0;
-                    counter = 0;
-                }
-                set0(counter++);
-                updateDescText();
-                if (counter == bitLength) {
-                    sendKeyChar(letter);
-                }
+            public void previewTextChanged(String text) {
+                updateDescText(text);
+            }
+
+            @Override
+            public void sendKey(char letter) {
+                sendKeyChar(letter);
+            }
+
+            @Override
+            public void previewLetterChanged(int letter) {
+                unicodeList.setSelection(letter);
             }
         });
-        v.findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (counter == bitLength) {
-                    letter = 0;
-                    counter = 0;
-                }
-                set1(counter++);
-                updateDescText();
-                if (counter == bitLength) {
-                    sendKeyChar(letter);
-                }
-                unicodeList.setSelection((int)letter);
-            }
-        });
+
+
+
+
         v.findViewById(R.id.buttonBack).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (counter == bitLength || counter == 0) {
+
+                if (keyboard.backKeyPressed())
                     getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
-                }
-                if (counter > 0) {
-                    set0(--counter);
-                    updateDescText();
-                }
+
+                isLongClick = false;
+
             }
         });
+        v.findViewById(R.id.buttonBack).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                backButtonTimer = new Timer();
+                backButtonTimer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        v.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (keyboard.backKeyPressed())
+                                    getCurrentInputConnection().sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                            }
+                        });
+
+                    }
+                }, 100, 100);
+
+                isLongClick = true;
+
+                return true;
+            }
+        });
+        v.findViewById(R.id.buttonBack).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (isLongClick)
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        try {
+                            backButtonTimer.cancel();
+                        } catch (Exception ignore) {}
+
+                        return false;
+                    }
+
+                return false;
+            }
+        });
+
+
+
         v.findViewById(R.id.imageButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,8 +148,8 @@ public class BinaryInputMethodService extends InputMethodService {
         v.findViewById(R.id.bit8Button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitLength = 8;
-                updateDescText();
+                settings.setBitLength((byte) 8);
+                updateDescText(keyboard.getDescText());
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putInt("bitLength", 8);
                 editor.apply();
@@ -114,8 +158,8 @@ public class BinaryInputMethodService extends InputMethodService {
         v.findViewById(R.id.bit16Button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bitLength = 16;
-                updateDescText();
+                settings.setBitLength((byte) 16);
+                updateDescText(keyboard.getDescText());
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putInt("bitLength", 16);
                 editor.apply();
@@ -171,14 +215,14 @@ public class BinaryInputMethodService extends InputMethodService {
             }
         });*/
 
-        unicodeList.setOnUnicodeEntryClickedListener(new UnicodeListView.OnUnicodeEntryClickedListener() {
-            @Override
-            public void clicked(char unicodeChar) {
-                letter = unicodeChar;
-                counter = bitLength;
-                sendKeyChar(letter);
-            }
-        });
+//        unicodeList.setOnUnicodeEntryClickedListener(new UnicodeListView.OnUnicodeEntryClickedListener() {
+//            @Override
+//            public void clicked(char unicodeChar) {
+//                letter = unicodeChar;
+//                counter = bitLength;
+//                sendKeyChar(letter);
+//            }
+//        });
 
 
         /*((CheckBox) v.findViewById(R.id.checkBox)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -193,32 +237,16 @@ public class BinaryInputMethodService extends InputMethodService {
         });*/
 
 
+
+        keyboard.ready();
+
         return v;
 
     }
 
-    void set0(byte at) {
-        letter = (char) (letter & ~(1 << (bitLength - 1 - at)));
+
+    void updateDescText(String htmlText) {
+        output.setText(Html.fromHtml(htmlText));
     }
 
-    void set1(byte at) {
-        letter = (char) (letter | (1 << (bitLength - 1 - at)));
-    }
-
-    void updateDescText() {
-        output.setText(Html.fromHtml(getDescText()));
-    }
-
-    String getDescText() {
-        String text = "";
-        for (int i = bitLength - 1; i >= 0; i-- ) {
-            if (i == bitLength - 1 - counter) text+="<u>";
-            text += (letter & 1 << i) == 0 ? "0" : "1";
-            if (i == bitLength - 1 - counter) text+="</u>";
-
-            if (bitLength > 8 && i % 8 == 0 && i != 0) text += " ";
-        }
-        text += ": " + letter;
-        return text;
-    }
 }

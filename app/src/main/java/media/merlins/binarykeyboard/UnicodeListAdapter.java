@@ -40,17 +40,17 @@ public class UnicodeListAdapter implements ListAdapter {
 
     @Override
     public int getCount() {
-        return 0x10000;
+        return 1000;
     }
 
     @Override
     public Object getItem(int i) {
-        return i;
+        return i<10?i:null;
     }
 
     @Override
     public long getItemId(int i) {
-        return i;
+        return i<10?i:0;
     }
 
     @Override

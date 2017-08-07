@@ -1,12 +1,16 @@
 package media.merlins.binarykeyboard;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.DataSetObserver;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ListViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -17,18 +21,51 @@ import java.util.TimerTask;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    public static final int INPUT_METHOD_RESULT = 947;
+    InputMethodManager manager;
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == INPUT_METHOD_RESULT && checkIfEnabled()) {
+            manager.showInputMethodPicker();
+        }
+    }
+
+    boolean checkIfEnabled() {
+        return manager.getEnabledInputMethodList().toString().contains("media.merlins.binarykeyboard");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        manager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         final ListView lv = (ListView) findViewById(R.id.unicodeList);
 
         findViewById(R.id.btnKeyboard).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).showInputMethodPicker();
+
+                if (!checkIfEnabled()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                    builder.setMessage(R.string.imeDialogMessage);
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent in = new Intent(android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS);
+                            startActivityForResult(in, INPUT_METHOD_RESULT);
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                } else {
+                    manager.showInputMethodPicker();
+                }
+
+
             }
         });
 
