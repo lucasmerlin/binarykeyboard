@@ -2,4 +2,6 @@
     <string name="app_name">Binary Keyboard</string>
     <string name="binary_input_label">Binary Keyboard</string>
     <string name="subtype_en_US">Binary Keyboard</string>
+    <string name="ok">OK</string>
+    <string name="imeDialogMessage">Please enable \"Binary Keyboard\" in the following dialog to enable the Binary Keyboard. Then select it as the active keyboard. You can always switch to the default keyboard by pressing the keyboard icon.</string>
 </resources>
