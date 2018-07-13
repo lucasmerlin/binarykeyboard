@@ -1,20 +1,9 @@
-package media.merlins.binarykeyboard;
+package media.merlins.binarykeyboardrelease;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.FrameLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 /**

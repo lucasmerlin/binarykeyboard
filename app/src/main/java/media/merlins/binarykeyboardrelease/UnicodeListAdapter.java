@@ -1,4 +1,4 @@
-package media.merlins.binarykeyboard;
+package media.merlins.binarykeyboardrelease;
 
 import android.content.Context;
 import android.database.DataSetObserver;

@@ -101,7 +101,7 @@
 
     </RelativeLayout>
 
-    <media.merlins.binarykeyboard.UnicodeListView
+    <media.merlins.binarykeyboardrelease.UnicodeListView
         android:layout_width="wrap_content"
         android:layout_height="160dp"
         android:id="@+id/unicodeList"

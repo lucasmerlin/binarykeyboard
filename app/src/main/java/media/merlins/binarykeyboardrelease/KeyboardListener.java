@@ -1,4 +1,4 @@
-package media.merlins.binarykeyboard;
+package media.merlins.binarykeyboardrelease;
 
 /**
  * Created by lucas on 07.11.2016.

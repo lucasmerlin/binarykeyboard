@@ -1,4 +1,4 @@
-package media.merlins.binarykeyboard;
+package media.merlins.binarykeyboardrelease;
 
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;

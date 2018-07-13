@@ -1,13 +1,10 @@
-package media.merlins.binarykeyboard;
+package media.merlins.binarykeyboardrelease;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +12,9 @@ import java.util.List;
 /**
  * Created by lucas on 07.11.2016.
  */
-public class TypeHexKeyboard implements KeyboardType {
+public class TypeBinaryKeyboard implements KeyboardType {
 
-    TableLayout mainLayout;
+    LinearLayout mainLayout;
 
     List<KeyboardListener> listeners = new ArrayList<>();
 
@@ -46,57 +43,39 @@ public class TypeHexKeyboard implements KeyboardType {
 
         if (mainLayout == null) {
 
-            mainLayout = new TableLayout(context);
+            mainLayout = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.binary_keyboard, parent, false);
 
 
-            for (int i = 0; i < 4; i++) {
-
-                TableRow row = new TableRow(context);
-                mainLayout.addView(row);
-
-                for (int j = 0; j < 4; j++) {
-
-
-                    Button b = new Button(context);
-
-                    row.addView(b);
+            mainLayout.findViewById(R.id.btn0).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (counter == settings.getBitLength()) {
+                        letter = 0;
+                        counter = 0;
+                    }
+                    set0(counter++);
+                    updateDescText();
+                    if (counter == settings.getBitLength()) {
+                        sendKeyChar(letter);
+                    }
                 }
-            }
-
-
-
-
-
-//
-//            mainLayout.findViewById(R.id.btn0).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (counter == settings.getBitLength()) {
-//                        letter = 0;
-//                        counter = 0;
-//                    }
-//                    set0(counter++);
-//                    updateDescText();
-//                    if (counter == settings.getBitLength()) {
-//                        sendKeyChar(letter);
-//                    }
-//                }
-//            });
-//            mainLayout.findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (counter == settings.getBitLength()) {
-//                        letter = 0;
-//                        counter = 0;
-//                    }
-//                    set1(counter++);
-//                    updateDescText();
-//                    if (counter == settings.getBitLength()) {
-//                        sendKeyChar(letter);
-//                    }
-//                    //unicodeList.setSelection((int)letter);
-//                }
-//            });
+            });
+            mainLayout.findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (counter == settings.getBitLength()) {
+                        letter = 0;
+                        counter = 0;
+                    }
+                    set1(counter++);
+                    updateDescText();
+                    if (counter == settings.getBitLength()) {
+                        sendKeyChar(letter);
+                    }
+                    //unicodeList.setSelection((int)letter);
+                    listeners.get(0).previewLetterChanged(letter);
+                }
+            });
         }
 
         return mainLayout;
@@ -108,6 +87,7 @@ public class TypeHexKeyboard implements KeyboardType {
         if (counter > 0) {
             set0(--counter);
             updateDescText();
+            listeners.get(0).previewLetterChanged(letter);
         }
 
         return counter == settings.getBitLength() || counter == 0;
